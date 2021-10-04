@@ -52,6 +52,26 @@ $(document).ready(function(){
 	});
 
 
+//Logout User
+	$("#logout_btn").click(function(e){
+		e.preventDefault();
+		$.ajax({
+			url:'ajax/myajax.php',
+			type:'POST',
+			data:{action:"logout_user"},
+			success:function(data){
+				if (data==1) {
+					location.reload();
+				}else{
+					alert("Something went wrong");
+				}
+				// alert(data);
+			}
+		});
+
+	});
+
+
 
 
 

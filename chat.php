@@ -57,6 +57,15 @@
                             </div>
                         </div>
                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
+                            <div class="dropdown text-right">
+                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                  <?php echo $_SESSION['username']; ?>
+                              </button>
+                              <div class="dropdown-menu">
+                                  <a class="dropdown-item" href="javascript:void" id="logout_btn">Logout</a>
+                                  
+                              </div>
+                          </div>
                             <div class="selected-user">
                                 <span>To: <span class="name">Emily Russell</span></span>
                             </div>

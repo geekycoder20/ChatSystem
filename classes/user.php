@@ -32,6 +32,16 @@ class User extends Database{
 	}
 
 
+	public function logout_user(){
+		unset($_SESSION['userid']);
+		unset($_SESSION['username']);
+		unset($_SESSION['useremail']);
+		session_unset();
+		session_destroy();
+		return 1;
+	}
+
+
 
 
 }

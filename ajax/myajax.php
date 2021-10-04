@@ -47,4 +47,13 @@ if (isset($_POST['action']) AND $_POST['action']=="login_user") {
 
 
 
+//Logout User
+if (isset($_POST['action']) AND $_POST['action']=="logout_user") {
+	$result = $user->logout_user();
+	echo $result;
+	exit;
+}
+
+
+
  ?>
