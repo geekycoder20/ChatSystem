@@ -56,4 +56,34 @@ if (isset($_POST['action']) AND $_POST['action']=="logout_user") {
 
 
 
+//Insert Chat
+if (isset($_POST['action']) AND $_POST['action']=="insertchat") {
+	$senderid = $_SESSION['userid'];
+	$receiverid = $_POST['receiverid'];
+	$msg = $_POST['msg'];
+	$result = $chat->insert_chat($senderid,$receiverid,$msg);
+	echo $result;
+	exit;
+}
+
+
+//Show Chats
+if (isset($_POST['action']) AND $_POST['action']=="showchats") {
+	$logged_in_user = $_SESSION['userid'];
+	$userid = $_POST['userid'];
+	$stmt = $database->con->prepare("SELECT * FROM chats WHERE (senderid=$logged_in_user OR receiverid=$logged_in_user) AND (senderid=$userid OR receiverid=$userid)");
+	$stmt->execute();
+
+	$stmt2 = $database->con->prepare("UPDATE chats SET status=1 WHERE receiverid=$logged_in_user AND senderid=$userid");
+	$stmt2->execute();
+
+	$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$json = json_encode($results);
+	echo $json;
+	// echo "Hello";
+
+}
+
+
+
  ?>

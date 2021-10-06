@@ -31,3 +31,7 @@ else{
 <script src="js/myscripts.js"></script>
 </body>
 </html>
+
+<script type="text/javascript">
+
+</script>
