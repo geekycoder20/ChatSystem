@@ -45,6 +45,22 @@ class User extends Database{
 
 
 
+
+	public function update_profile($newpwd,$newfilename){
+		$userid = $_SESSION['userid'];
+		if (empty($newfilename)) {
+			$stmt = $this->con->prepare("UPDATE users SET password=:newpwd WHERE id=:userid");
+			$stmt->execute([':newpwd'=>$newpwd,':userid'=>$userid]);
+		}else{
+			$stmt = $this->con->prepare("UPDATE users SET password=:newpwd,avatar=:avatar WHERE id=:userid");
+			$stmt->execute([':newpwd'=>$newpwd,':avatar'=>$newfilename,':userid'=>$userid]);
+		}
+		return $stmt;
+	}
+
+
+
+
 }
 
 

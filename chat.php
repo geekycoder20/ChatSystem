@@ -63,7 +63,9 @@
                                   <?php echo $_SESSION['username']; ?>
                               </button>
                               <div class="dropdown-menu">
+                                  <a class="dropdown-item" data-toggle="modal" data-target="#myModal" href="javascript:void" id="profile_btn">Profile</a>
                                   <a class="dropdown-item" href="javascript:void" id="logout_btn">Logout</a>
+                                  
                                   
                               </div>
                           </div>
@@ -96,4 +98,61 @@
     </div>
     <!-- Content wrapper end -->
 
+</div>
+
+
+
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Profile</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+            <div class="form-group">
+              <label for="name">Your Name:</label>
+              <input type="text" class="form-control" id="name" placeholder="Your Name" value="<?php echo $_SESSION['username']?>" name="name" disabled>
+          </div>
+          <div class="form-group">
+              <label for="email">Your Email:</label>
+              <input type="email" class="form-control" id="email" placeholder="Your Email" value="<?php echo $_SESSION['useremail']?>" name="email" disabled>
+          </div>
+          <form action="" id="update_profile">
+          <div class="form-group">
+              <label for="pwd">Current Password:</label>
+              <input type="password" class="form-control" id="pwd" placeholder="Your Current Password" name="pwd">
+          </div>
+          <div class="form-group">
+              <label for="newpwd">New Password:</label>
+              <input type="password" class="form-control" id="newpwd" placeholder="New Password" name="newpwd">
+          </div>
+          <div class="form-group">
+              <label for="connewpwd">Confirm New Password:</label>
+              <input type="password" class="form-control" id="connewpwd" placeholder="Confirm New Password" name="connewpwd">
+          </div>
+          <div class="form-group">
+              <label for="profile_pic">Profile Picture</label>
+              <input type="file" class="form-control" id="profile_pic" name="profile_pic">
+          </div>
+
+        <button type="submit" class="btn btn-primary" id="update_profile_btn">Update</button>
+        <div id="profile_result">
+            
+        </div>
+    </form>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
 </div>

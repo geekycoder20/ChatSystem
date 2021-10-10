@@ -76,7 +76,6 @@ $(document).ready(function(){
 	$(".users").on("click",".person",function(){
 		userid = $(this).attr("user-id");
 		$("#msg_txt").attr("touser",userid);
-		$("#toname").text("Akram");
 		$("#active_user_id").attr("currentid",userid);
 		showchats(userid);
 	});
@@ -95,12 +94,6 @@ $(document).ready(function(){
 			data:{action:"insertchat",receiverid:receiverid,msg:msg},
 			success:function(data){
 				$("#msg_txt").val("");
-				// if (data==1) {
-				// 	location.reload();
-				// }else{
-				// 	alert("Something went wrong");
-				// }
-				// alert(data);
 			}
 		});
 	});
@@ -118,31 +111,32 @@ function showchats(userid){
 			data:{action:"showchats",userid:userid},
 			dataType:"json",
 			success:function(data){
-				for (var i = 0; i < data.length; i++) {
+				for (var i = 0; i < data[0].length; i++) {
+					//check time
 					var today = new Date();
-					var time = new Date(Date.parse(data[i].timestamp));
+					var time = new Date(Date.parse(data[0][i].timestamp));
 					mytime = time.getDate()+"-"+time.getMonth()+"-"+time.getFullYear()+" "+time.getHours()+":"+time.getMinutes();
 					if (today.getDate()==time.getDate()) {
 						mytime = time.getHours()+":"+time.getMinutes();
 					}
-
-					
-
-					if(userid==data[i].receiverid){
-						if (data[i].status==1) {
+					//check status for msg seen
+					if(userid==data[0][i].receiverid){
+						if (data[0][i].status==1) {
 							var seen_tick = " <span class='fa fa-check-circle'></span>";
 						}else{
 							var seen_tick = "";
 						}
 						
-						output+= "<li class='chat-right'><div class='chat-hour'>"+mytime+seen_tick+"</div><div class='chat-text' style='background: #d7edd5;'>"+data[i].msg+"</div><div class='chat-avatar'><img src='https://www.bootdey.com/img/Content/avatar/avatar5.png' alt='Retail Admin'><div class='chat-name'>You</div></div></li>";
+						output+= "<li class='chat-right'><div class='chat-hour'>"+mytime+seen_tick+"</div><div class='chat-text' style='background: #d7edd5;'>"+data[0][i].msg+"</div><div class='chat-avatar'><img src='https://www.bootdey.com/img/Content/avatar/avatar5.png' alt='Retail Admin'><div class='chat-name'>You</div></div></li>";
 					}else{
 						var seen_tick = "";
-						output+= "<li class='chat-left'><div class='chat-avatar'><img src='https://www.bootdey.com/img/Content/avatar/avatar3.png' alt='Retail Admin'><div class='chat-name'>Russell</div></div><div class='chat-text'>"+data[i].msg+"</div><div class='chat-hour'>"+mytime+seen_tick+"</div></li>";
+						output+= "<li class='chat-left'><div class='chat-avatar'><img src='https://www.bootdey.com/img/Content/avatar/avatar3.png' alt='Retail Admin'><div class='chat-name'>"+data[1][0].name+"</div></div><div class='chat-text'>"+data[0][i].msg+"</div><div class='chat-hour'>"+mytime+seen_tick+"</div></li>";
 					}
 				}
-				// console.log(data);
+
+				$("#toname").text(data[1][0].name);
 				$(".chat-box").html(output);
+
 			}
 		});
 	}
@@ -152,6 +146,35 @@ function showchats(userid){
 	}, 2000);
 
 
+
+
+//Update Profile
+	$("#update_profile_btn").click(function(e){
+		e.preventDefault();
+		var formdata = new FormData($("#update_profile")[0]);
+		formdata.append("action","update_profile");
+		$.ajax({
+			url:'ajax/myajax.php',
+			type:'POST',
+			data: formdata,
+			contentType:false,
+			processData:false,
+			success:function(data){
+				if (data==0) {
+					$("#profile_result").html("<div class='alert alert-danger'>Something Went wrong</div>");
+				}
+				else if(data==1){
+					$("#profile_result").html("<div class='alert alert-success'>Profile Updated Successfully.</div>");
+					$("#update_profile")[0].reset();
+				}else{
+					$("#profile_result").html("<div class='alert alert-danger'>"+data+"</div>");
+				}
+
+				// $("#profile_result").html("<div class='alert alert-danger'>"+data+"</div>");
+			}
+		});
+
+	});
 
 
 
