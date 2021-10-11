@@ -1,5 +1,4 @@
 <div class="container">
-
     <!-- Page header start -->
     <div class="page-title">
         <div class="row gutters">
@@ -46,7 +45,7 @@
                                     <!-- <li class="person active-user" data-chat="person1"> -->
                                         <div class="user">
                                             <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
-                                            <span class="status busy"></span>
+                                            <span class="status mystatus" uid="<?php echo $user['id'];?>"></span>
                                         </div>
                                         <p class="name-time">
                                             <span class="name user_name" id="user_name"><?php echo $user['name']; ?></span>

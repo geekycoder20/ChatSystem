@@ -65,7 +65,6 @@ $(document).ready(function(){
 				}else{
 					alert("Something went wrong");
 				}
-				// alert(data);
 			}
 		});
 	});
@@ -141,8 +140,64 @@ function showchats(userid){
 		});
 	}
 
+
+
+function update_login_details(){
+	$.ajax({
+			url:'ajax/myajax.php',
+			type:'POST',
+			data: {action:"update_login_details"},
+			success:function(data){
+
+			}
+	});
+}
+
+
+function get_login_details(){
+	$.ajax({
+			url:'ajax/myajax.php',
+			type:'POST',
+			data: {action:"get_login_details"},
+			dataType:"json",
+			success:function(data){
+				for (var i = 0; i<data.length; i++) {
+					var today = new Date();
+					var activity = new Date(Date.parse(data[i].lastactivity));
+					var today_date = today.getDate();
+					var today_hours = today.getHours();
+					var today_mins = today.getMinutes();
+					var activity_date = activity.getDate();
+					var activity_hours = activity.getHours();
+					var activity_mins = activity.getMinutes();
+					if (today_date==activity_date && today_hours==activity_hours) {
+						if ((activity_mins + 1) > today_mins) {
+							$(".mystatus").each(function() {
+								if ($(this).attr("uid")==data[i].userid) {
+									$(this).addClass("online");
+								}
+							});
+						}else{
+							$(".mystatus").each(function() {
+								if ($(this).attr("uid")==data[i].userid) {
+									$(this).removeClass("online");
+								}
+							});
+						}
+						
+					}
+				}
+			}
+	});
+}
+
     setInterval(function(){ 
-    showchats($("#active_user_id").attr("currentid"));  
+    	showchats($("#active_user_id").attr("currentid")); 
+    	get_login_details();
+	}, 2000);
+
+	setInterval(function(){ 
+    	update_login_details(); 
 	}, 2000);
 
 
@@ -169,8 +224,6 @@ function showchats(userid){
 				}else{
 					$("#profile_result").html("<div class='alert alert-danger'>"+data+"</div>");
 				}
-
-				// $("#profile_result").html("<div class='alert alert-danger'>"+data+"</div>");
 			}
 		});
 

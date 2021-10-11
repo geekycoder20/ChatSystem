@@ -58,6 +58,27 @@ if (isset($_POST['action']) AND $_POST['action']=="logout_user") {
 
 
 
+//Update Login Details
+if (isset($_POST['action']) AND $_POST['action']=="update_login_details") {
+	$currentdate = date('Y-m-d H:i:s');
+	$userid = $_SESSION['userid'];
+	$stmt = $database->con->prepare("UPDATE chat_login_details SET lastactivity=:currentdate WHERE userid=:userid");
+	$stmt->execute([':currentdate'=>$currentdate,':userid'=>$userid]);
+	return $stmt;
+}
+
+
+//Get Login Details
+if (isset($_POST['action']) AND $_POST['action']=="get_login_details") {
+	$stmt = $database->con->prepare("SELECT * FROM chat_login_details");
+	$stmt->execute();
+	$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$json = json_encode($results);
+	echo $json;
+}
+
+
+
 //Insert Chat
 if (isset($_POST['action']) AND $_POST['action']=="insertchat") {
 	$senderid = $_SESSION['userid'];

@@ -10,6 +10,11 @@ class User extends Database{
 	public function register_user($name,$email,$password){
 		$stmt = $this->con->prepare("INSERT INTO users (name,email,password) VALUES (:name,:email,:password)");
 		$stmt->execute([':name'=>$name,':email'=>$email,':password'=>$password]);
+		$lastuserid = $this->con->lastInsertId();
+
+		$stmt2 = $this->con->prepare("INSERT INTO chat_login_details (userid) VALUES (:userid)");
+		$stmt2->execute([':userid'=>$lastuserid]);
+
 		return $stmt;
 	}
 
