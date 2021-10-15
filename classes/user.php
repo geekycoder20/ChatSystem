@@ -7,9 +7,10 @@ class User extends Database{
 		return $stmt;
 	}
 
+
 	public function register_user($name,$email,$password){
 		$stmt = $this->con->prepare("INSERT INTO users (name,email,password) VALUES (:name,:email,:password)");
-		$stmt->execute([':name'=>$name,':email'=>$email,':password'=>$password]);
+		$stmt->execute([':name'=>$name,':email'=>$email,':password'=>md5($password)]);
 		$lastuserid = $this->con->lastInsertId();
 
 		$stmt2 = $this->con->prepare("INSERT INTO chat_login_details (userid) VALUES (:userid)");
@@ -18,13 +19,14 @@ class User extends Database{
 		return $stmt;
 	}
 
+
 	public function login_user($email,$password){
 		$stmt = $this->con->prepare("SELECT * FROM users WHERE email=:email");
 		$stmt->execute([':email'=>$email]);
 		if ($stmt->rowCount()>0) {
 			$found_user = $stmt->fetch();
 			$found_user_pwd = $found_user['password'];
-			if ($found_user_pwd===$password) {
+			if ($found_user_pwd===md5($password)) {
 				$_SESSION['userid'] = $found_user['id'];
 				$_SESSION['username'] = $found_user['name'];
 				$_SESSION['useremail'] = $found_user['email'];
@@ -49,19 +51,29 @@ class User extends Database{
 
 
 
-
-
 	public function update_profile($newpwd,$newfilename){
 		$userid = $_SESSION['userid'];
 		if (empty($newfilename)) {
 			$stmt = $this->con->prepare("UPDATE users SET password=:newpwd WHERE id=:userid");
-			$stmt->execute([':newpwd'=>$newpwd,':userid'=>$userid]);
+			$stmt->execute([':newpwd'=>md5($newpwd),':userid'=>$userid]);
 		}else{
 			$stmt = $this->con->prepare("UPDATE users SET password=:newpwd,avatar=:avatar WHERE id=:userid");
-			$stmt->execute([':newpwd'=>$newpwd,':avatar'=>$newfilename,':userid'=>$userid]);
+			$stmt->execute([':newpwd'=>md5($newpwd),':avatar'=>$newfilename,':userid'=>$userid]);
 		}
 		return $stmt;
 	}
+
+
+
+	public function find_user($id){
+		$userid = $id;
+		$stmt = $this->con->prepare("SELECT * FROM users WHERE id=:userid");
+		$stmt->execute([':userid'=>$userid]);
+		$myuser = $stmt->fetch();
+		return $myuser;
+	}
+
+
 
 
 

@@ -1,5 +1,8 @@
 $(document).ready(function(){
-	//Register User
+//////////////////////////////////////////////////////////////////////////////////////////////
+//											Users
+//////////////////////////////////////////////////////////////////////////////////////////////
+//Register User
 	$("#reg_btn").click(function(e){
 		e.preventDefault();
 		var formdata = new FormData($("#reg_form")[0]);
@@ -71,17 +74,59 @@ $(document).ready(function(){
 
 
 
-//
+//Update User Profile
+	$("#update_profile_btn").click(function(e){
+		e.preventDefault();
+		var formdata = new FormData($("#update_profile")[0]);
+		formdata.append("action","update_profile");
+		$.ajax({
+			url:'ajax/myajax.php',
+			type:'POST',
+			data: formdata,
+			contentType:false,
+			processData:false,
+			success:function(data){
+				if (data==0) {
+					$("#profile_result").html("<div class='alert alert-danger'>Something Went wrong</div>");
+				}
+				else if(data==1){
+					$("#profile_result").html("<div class='alert alert-success'>Profile Updated Successfully.</div>");
+					$("#update_profile")[0].reset();
+				}else{
+					$("#profile_result").html("<div class='alert alert-danger'>"+data+"</div>");
+				}
+			}
+		});
+
+	});
+
+
+//search and filter users
+$("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".users .person").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+
+
+//User Button Click Functions
 	$(".users").on("click",".person",function(){
 		userid = $(this).attr("user-id");
 		$("#msg_txt").attr("touser",userid);
 		$("#active_user_id").attr("currentid",userid);
 		showchats(userid);
+		$(".person").removeClass("active-user");
+		$(this).addClass("active-user");
+		$(".chat-container").show();
 	});
 
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+//											Chats
+//////////////////////////////////////////////////////////////////////////////////////////////
 //Insert Chat
 	$("#chat_send_btn").click(function(e){
 		receiverid = $("#msg_txt").attr("touser");
@@ -96,8 +141,6 @@ $(document).ready(function(){
 			}
 		});
 	});
-
-
 
 
 //show chats
@@ -129,19 +172,23 @@ function showchats(userid){
 						output+= "<li class='chat-right'><div class='chat-hour'>"+mytime+seen_tick+"</div><div class='chat-text' style='background: #d7edd5;'>"+data[0][i].msg+"</div><div class='chat-avatar'><img src='https://www.bootdey.com/img/Content/avatar/avatar5.png' alt='Retail Admin'><div class='chat-name'>You</div></div></li>";
 					}else{
 						var seen_tick = "";
-						output+= "<li class='chat-left'><div class='chat-avatar'><img src='https://www.bootdey.com/img/Content/avatar/avatar3.png' alt='Retail Admin'><div class='chat-name'>"+data[1][0].name+"</div></div><div class='chat-text'>"+data[0][i].msg+"</div><div class='chat-hour'>"+mytime+seen_tick+"</div></li>";
+						output+= "<li class='chat-left'><div class='chat-avatar'><img src='images/"+data[1][0].avatar+"' alt='Retail Admin'><div class='chat-name'>"+data[1][0].name+"</div></div><div class='chat-text'>"+data[0][i].msg+"</div><div class='chat-hour'>"+mytime+seen_tick+"</div></li>";
 					}
+
+					if (data[0][i].status==0) {
+						$(".chatContainerScroll").scrollTop($('.chatContainerScroll')[0].scrollHeight);
+					}
+
 				}
 
 				$("#toname").text(data[1][0].name);
 				$(".chat-box").html(output);
-
 			}
 		});
 	}
 
 
-
+//function for updating user last activity
 function update_login_details(){
 	$.ajax({
 			url:'ajax/myajax.php',
@@ -154,6 +201,7 @@ function update_login_details(){
 }
 
 
+//function for checking if a user is online or offline
 function get_login_details(){
 	$.ajax({
 			url:'ajax/myajax.php',
@@ -174,6 +222,7 @@ function get_login_details(){
 						if ((activity_mins + 1) > today_mins) {
 							$(".mystatus").each(function() {
 								if ($(this).attr("uid")==data[i].userid) {
+									$(this).removeClass("busy");
 									$(this).addClass("online");
 								}
 							});
@@ -181,6 +230,7 @@ function get_login_details(){
 							$(".mystatus").each(function() {
 								if ($(this).attr("uid")==data[i].userid) {
 									$(this).removeClass("online");
+									$(this).addClass("busy");
 								}
 							});
 						}
@@ -192,7 +242,7 @@ function get_login_details(){
 }
 
     setInterval(function(){ 
-    	showchats($("#active_user_id").attr("currentid")); 
+    	showchats($("#active_user_id").attr("currentid"));
     	get_login_details();
 	}, 2000);
 
@@ -200,37 +250,9 @@ function get_login_details(){
     	update_login_details(); 
 	}, 2000);
 
-
-
-
-//Update Profile
-	$("#update_profile_btn").click(function(e){
-		e.preventDefault();
-		var formdata = new FormData($("#update_profile")[0]);
-		formdata.append("action","update_profile");
-		$.ajax({
-			url:'ajax/myajax.php',
-			type:'POST',
-			data: formdata,
-			contentType:false,
-			processData:false,
-			success:function(data){
-				if (data==0) {
-					$("#profile_result").html("<div class='alert alert-danger'>Something Went wrong</div>");
-				}
-				else if(data==1){
-					$("#profile_result").html("<div class='alert alert-success'>Profile Updated Successfully.</div>");
-					$("#update_profile")[0].reset();
-				}else{
-					$("#profile_result").html("<div class='alert alert-danger'>"+data+"</div>");
-				}
-			}
-		});
-
-	});
-
-
-
+	setTimeout(function(){
+   		$(".chatContainerScroll").scrollTop($('.chatContainerScroll')[0].scrollHeight);
+	}, 2000);
 
 
 

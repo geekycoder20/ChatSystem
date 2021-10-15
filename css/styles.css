@@ -106,18 +106,7 @@ body{margin-top:20px;}
 
 .users .person.active-user {
     background-color: #ffffff;
-    /* Fallback Color */
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#f7f9fb), to(#ffffff));
-    /* Saf4+, Chrome */
-    background-image: -webkit-linear-gradient(right, #f7f9fb, #ffffff);
-    /* Chrome 10+, Saf5.1+, iOS 5+ */
-    background-image: -moz-linear-gradient(right, #f7f9fb, #ffffff);
-    /* FF3.6 */
-    background-image: -ms-linear-gradient(right, #f7f9fb, #ffffff);
-    /* IE10 */
-    background-image: -o-linear-gradient(right, #f7f9fb, #ffffff);
-    /* Opera 11.10+ */
-    background-image: linear-gradient(right, #f7f9fb, #ffffff);
+    
 }
 
 .users .person:last-child {

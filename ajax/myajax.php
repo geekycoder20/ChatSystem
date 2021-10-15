@@ -21,6 +21,17 @@ if (isset($_POST['action']) AND $_POST['action']=="reg_user") {
 		echo "Passwords does not matched";
 		exit;
 	}
+
+	$stmt = $database->con->prepare("SELECT * FROM users WHERE email=:useremail");
+	$stmt->execute([':useremail'=>$useremail]);
+	$found_user = $stmt->rowCount();
+	if ($found_user>0) {
+		echo "User already exists with that email";
+		exit;
+	}
+
+
+
 	$result = $user->register_user($fullname,$useremail,$userpwd);
 	echo $result ? 1 : 0;
 	exit;
@@ -60,21 +71,19 @@ if (isset($_POST['action']) AND $_POST['action']=="logout_user") {
 
 //Update Login Details
 if (isset($_POST['action']) AND $_POST['action']=="update_login_details") {
-	$currentdate = date('Y-m-d H:i:s');
-	$userid = $_SESSION['userid'];
-	$stmt = $database->con->prepare("UPDATE chat_login_details SET lastactivity=:currentdate WHERE userid=:userid");
-	$stmt->execute([':currentdate'=>$currentdate,':userid'=>$userid]);
-	return $stmt;
+	$result = $chat->update_chat_login_details();
+	echo $result;
+	exit;
 }
 
 
 //Get Login Details
 if (isset($_POST['action']) AND $_POST['action']=="get_login_details") {
-	$stmt = $database->con->prepare("SELECT * FROM chat_login_details");
-	$stmt->execute();
-	$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$result = $chat->get_chat_login_details();
+	$results = $result->fetchAll(PDO::FETCH_ASSOC);
 	$json = json_encode($results);
 	echo $json;
+	exit;
 }
 
 
@@ -92,22 +101,13 @@ if (isset($_POST['action']) AND $_POST['action']=="insertchat") {
 
 //Show Chats
 if (isset($_POST['action']) AND $_POST['action']=="showchats") {
-	$logged_in_user = $_SESSION['userid'];
 	$userid = $_POST['userid'];
-	$stmt = $database->con->prepare("SELECT * FROM chats WHERE (senderid=$logged_in_user OR receiverid=$logged_in_user) AND (senderid=$userid OR receiverid=$userid)");
-	$stmt->execute();
-
-	$mystmt = $database->con->prepare("SELECT * FROM users WHERE id=$userid");
-	$mystmt->execute();
-
-	$stmt2 = $database->con->prepare("UPDATE chats SET status=1 WHERE receiverid=$logged_in_user AND senderid=$userid");
-	$stmt2->execute();
-
-	$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	$results2 = $mystmt->fetchAll(PDO::FETCH_ASSOC);
+	$myresults = $chat->show_chats($userid);
+	$results = $myresults[0]->fetchAll(PDO::FETCH_ASSOC);
+	$results2 = $myresults[1]->fetchAll(PDO::FETCH_ASSOC);
 	$json = json_encode([$results,$results2]);
 	echo $json;
-	// echo "Hello";
+	exit;
 }
 
 
@@ -132,10 +132,8 @@ if (isset($_POST['action']) AND $_POST['action']=="update_profile") {
 		exit;
 	}
 	$userid = $_SESSION['userid'];
-	$stmt = $database->con->prepare("SELECT * FROM users WHERE id=:userid");
-	$stmt->execute([':userid'=>$userid]);
-	$myuser = $stmt->fetch();
-	if ($myuser['password']!==$pwd) {
+	$myuser = $user->find_user($userid);
+	if ($myuser['password']!==md5($pwd)) {
 		echo "Current Password is wrong";
 		exit;
 	}

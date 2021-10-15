@@ -27,7 +27,7 @@
                             <div class="users-container">
                                 <div class="chat-search-box">
                                     <div class="input-group">
-                                        <input class="form-control" placeholder="Search">
+                                        <input class="form-control" placeholder="Search" id="myInput">
                                         <div class="input-group-btn">
                                             <button type="button" class="btn btn-info">
                                                 <i class="fa fa-search"></i>
@@ -41,14 +41,29 @@
                                     while ($user = $users->fetch()) :
                                      ?>
 
+<?php 
+$logged_in_user = $_SESSION['userid'];
+$userid = $user['id'];
+$stmt = $database->con->prepare("SELECT * FROM chats WHERE (senderid=:logged_in_user OR receiverid=:logged_in_user) AND (senderid=:userid OR receiverid=:userid) AND status=0");
+$stmt->execute([':logged_in_user'=>$logged_in_user,':userid'=>$userid]);
+$rows = $stmt->rowCount();
+    
+ ?>
+
+
                                     <li class="person" data-chat="person1" user-id="<?php echo $user['id'];?>">
                                     <!-- <li class="person active-user" data-chat="person1"> -->
                                         <div class="user">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin">
+                                          <?php 
+                                          if (!empty($user['avatar'])) {
+                                            # code...
+                                          }
+                                           ?>
+                                            <img src="images/<?php echo $user['avatar'];?>" alt="Retail Admin">
                                             <span class="status mystatus" uid="<?php echo $user['id'];?>"></span>
                                         </div>
                                         <p class="name-time">
-                                            <span class="name user_name" id="user_name"><?php echo $user['name']; ?></span>
+                                            <span class="name user_name" id="user_name"><?php echo $user['name']; ?>&nbsp;<span class="badge badge-danger"><?php echo $rows>0 ? $rows : ''; ?></span></span>
                                             <!-- <span class="time">15/02/2019</span> -->
                                         </p>
                                     </li>
@@ -69,11 +84,11 @@
                               </div>
                           </div>
                             <div class="selected-user">
-                                <span>To: <span class="name" id="toname">User</span></span>
+                                <span>To: <span class="name" id="toname"></span></span>
                                 <!-- <span id="toname">Miss Ayesha</span> -->
                             </div>
-                            <div class="chat-container">
-                                <ul class="chat-box chatContainerScroll">
+                            <div class="chat-container" style="display: none;">
+                                <ul class="chat-box chatContainerScroll" style="max-height: 300px; overflow: auto;">
                                     
                                 </ul>
                                 <div class="form-group mt-3 mb-0">
